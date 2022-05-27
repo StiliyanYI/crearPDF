@@ -5,6 +5,7 @@
 package crearpdf;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -41,13 +42,23 @@ public class CrearPDF {
             }
             //Se abre el documento
             documento.open();
-            //Añadir párrafos
+            //Añadir titulo
             Paragraph titulo = new Paragraph("Clasificacion ATP",
-                            FontFactory.getFont("arial", // fuente
+                    FontFactory.getFont("arial", // fuente
                             22, // tamaño
                             Font.ITALIC, // estilo
                             BaseColor.BLUE)); // color
             documento.add(titulo);
+            //Añadir una linea en blanco
+            documento.add(Chunk.NEWLINE);
+            //Añadir párrafos
+            documento.add(new Paragraph(
+                    "El ranking ATP es una clasificación mundial de tenistas profesionales de la Asociación "
+                    + "de Tenistas Profesionales. Se actualiza cada semana y abarca los resultados de las últimas 52 semanas. "
+                    + "Se utiliza para seleccionar a los habilitados en cada torneo y a los cabezas de serie, el máximo galardón para "
+                    + "cualquier tenista es ser considerado entre los 5 mejores del mundo en el ranking ATP."));
+            //Se cierra el documento y escribe, si no se cierra no escribe nada
+            documento.close();
         } catch (DocumentException ex) {
             Logger.getLogger(CrearPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
