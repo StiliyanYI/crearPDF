@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -86,20 +88,31 @@ public class CrearPDF {
             //Añadir una linea en blanco
             documento.add(Chunk.NEWLINE);
             //Añadir una tabla
-            float[] anchoColumnas={3, 2};
+            float[] anchoColumnas={3, 2, 1};
             PdfPTable tabla = new PdfPTable(anchoColumnas);
             PdfPCell celda = new PdfPCell(new Phrase("Nombre"));
             celda.setBackgroundColor(GrayColor.PINK);
             tabla.addCell(celda);
             celda.setPhrase(new Phrase("Fecha de nacimiento"));
             tabla.addCell(celda);
+            celda.setPhrase(new Phrase("Foto"));
+            tabla.addCell(celda);
             
             //Crear tabla usando la bd, nombres y fechas
             sentencia = conexion.createStatement();
             resultado = sentencia.executeQuery("Select * from tagenda;");
+            byte[] bytesFoto;
+            LocalDate dateFecha;
+            String stringFecha;
+            DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("EEEE, dd-MM-yyyy");
             while (resultado.next()) {                
                 tabla.addCell(resultado.getString("nombre"));
-                tabla.addCell(resultado.getString("fecha_nac"));                
+                stringFecha = resultado.getString("fecha_nac");
+                dateFecha = LocalDate.parse(stringFecha, DateTimeFormatter.ISO_DATE);
+                tabla.addCell(formatoFecha.format(dateFecha));
+                bytesFoto = resultado.getBytes("Foto");
+                Image imageFoto = Image.getInstance(bytesFoto);
+                tabla.addCell(imageFoto);
             }
             
             
